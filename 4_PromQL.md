@@ -232,7 +232,7 @@ Affiche uniquement le total des requêtes HTTP de la route `/health`.
 
 **Réponse :**
 
-    (votre requête ici)
+    http_requests_total{route="/health"}
 
 
 ### Question 2 — Requête simple
@@ -240,7 +240,7 @@ Affiche uniquement les requêtes HTTP en erreur `404`.
 
 **Réponse :**
 
-    (votre requête ici)
+    http_requests_total{status_code="404"}
 
 
 ### Question 3 — Requête avec opérateurs arithmétiques
@@ -250,7 +250,7 @@ Calcule le **pourcentage de heap NodeJS utilisée**.
 
 **Réponse :**
 
-    (votre requête ici)
+    (nodejs_heap_size_used_bytes / nodejs_heap_size_total_bytes) * 100
 
 
 ### Question 4 — Requête avec opérateurs arithmétiques
@@ -260,7 +260,9 @@ Astuce : utilise `_sum` et `_count`.
 
 **Réponse :**
 
-    (votre requête ici)
+    http_request_duration_seconds_sum{route="/slow",status_code="200"}
+      /
+    http_request_duration_seconds_count{route="/slow",status_code="200"}
 
 
 ### Question 5 — Requête avec opérateurs de comparaison
@@ -268,7 +270,7 @@ Affiche les séries où le **nombre total de requêtes HTTP est supérieur à 10
 
 **Réponse :**
 
-    (votre requête ici)
+    http_requests_total > 10
 
 
 ### Question 6 — Requête avec opérateurs logiques
@@ -279,7 +281,7 @@ Affiche les requêtes HTTP qui sont :
 
 **Réponse :**
 
-    (votre requête ici)
+    http_requests_total{route="/health"} or http_requests_total{status_code="404"}
 
 
 ### Question 7 — Requête avec fonctions
@@ -287,7 +289,7 @@ Calcule le **taux de requêtes HTTP par seconde** sur 5 minutes pour `/metrics`.
 
 **Réponse :**
 
-    (votre requête ici)
+    rate(http_requests_total{route="/metrics"}[5m])
 
 
 ### Question 8 — Requête avec fonctions
@@ -295,7 +297,7 @@ Calcule le **nombre total de requêtes HTTP GET**.
 
 **Réponse :**
 
-    (votre requête ici)
+    sum(http_requests_total{method="GET"})
 
 
 ### Question 9 — Requête avec fonctions
@@ -305,7 +307,7 @@ Affiche la **plus petite valeur de lag de l’event loop**.
 
 **Réponse :**
 
-    (votre requête ici)
+    min_over_time(nodejs_eventloop_lag_seconds[5m])
 
 
 ### Question 10 — Requête avec fonctions
@@ -313,7 +315,7 @@ Affiche la **plus grande valeur de lag de l’event loop**.
 
 **Réponse :**
 
-    (votre requête ici)
+    max_over_time(nodejs_eventloop_lag_seconds[5m])
 
 
 ## Requêtes avancées sur le serveur Ubuntu (Node Exporter)
@@ -323,7 +325,7 @@ Calcule le **pourcentage d’utilisation CPU global** sur 5 minutes.
 
 **Réponse :**
 
-    (votre requête ici)
+    100 - (avg by(instance) (rate(node_cpu_seconds_total{mode="idle"}[5m])) * 100)
 
 
 ### Question 2 — Mémoire
@@ -331,7 +333,7 @@ Calcule le **pourcentage de RAM utilisée**.
 
 **Réponse :**
 
-    (votre requête ici)
+    (1 - (node_memory_MemAvailable_bytes / node_memory_MemTotal_bytes)) * 100
 
 
 ### Question 3 — Disque
@@ -339,6 +341,6 @@ Affiche le **pourcentage d’occupation disque** de `/`.
 
 **Réponse :**
 
-    (votre requête ici)
+    (1 - (node_filesystem_avail_bytes{mountpoint="/"} / node_filesystem_size_bytes{mountpoint="/"})) * 100
 
 

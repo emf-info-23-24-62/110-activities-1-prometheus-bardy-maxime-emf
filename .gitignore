@@ -1,0 +1,7 @@
+monitoring/alertmanager.yml
+monitoring/.env
+node_modules/
+*.log
+.DS_Store
+DocATaDispo/~$*
+DocATaDispo/ssh_key

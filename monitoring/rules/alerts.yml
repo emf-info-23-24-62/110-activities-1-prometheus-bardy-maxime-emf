@@ -1,0 +1,40 @@
+groups:
+  - name: instance-alerts
+    rules:
+      - alert: InstanceDown
+        expr: up == 0
+        for: 1m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Instance {{ $labels.instance }} down"
+          description: "L'instance {{ $labels.instance }} (job {{ $labels.job }}) est down depuis plus de 1 minute"
+
+  - name: host-alerts
+    rules:
+      - alert: HighCpuUsage
+        expr: 100 - (avg by(instance) (rate(node_cpu_seconds_total{mode="idle"}[5m])) * 100) > 80
+        for: 2m
+        labels:
+          severity: warning
+        annotations:
+          summary: "CPU élevé sur {{ $labels.instance }}"
+          description: "L'utilisation CPU est supérieure à 80% depuis 2 minutes (valeur actuelle: {{ $value | printf \"%.1f\" }}%)"
+
+      - alert: HighMemoryUsage
+        expr: (1 - (node_memory_MemAvailable_bytes / node_memory_MemTotal_bytes)) * 100 > 85
+        for: 2m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Mémoire élevée sur {{ $labels.instance }}"
+          description: "L'utilisation mémoire est supérieure à 85% depuis 2 minutes (valeur actuelle: {{ $value | printf \"%.1f\" }}%)"
+
+      - alert: HighDiskUsage
+        expr: (1 - (node_filesystem_avail_bytes{fstype!~"tmpfs|overlay|squashfs"} / node_filesystem_size_bytes{fstype!~"tmpfs|overlay|squashfs"})) * 100 > 85
+        for: 2m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Disque plein sur {{ $labels.instance }} ({{ $labels.mountpoint }})"
+          description: "L'occupation disque sur {{ $labels.mountpoint }} est supérieure à 85% depuis 2 minutes (valeur actuelle: {{ $value | printf \"%.1f\" }}%)"
